@@ -1,1 +1,1 @@
-# Django-Project for final year project
+# Django project for final year project
