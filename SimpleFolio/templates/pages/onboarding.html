@@ -1,0 +1,167 @@
+{% block content %}
+    <head>
+         <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet"
+              href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+              integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+              crossorigin="anonymous">
+    </head>
+    <style>
+        html, body {
+            background: #fafafa;
+            color: #333333;
+        }
+        #regForm {
+            background-color: #000;
+            padding: 2%;
+            width: 10%;
+            min-width: 25%;
+            color: #fff;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .tab {
+            display: none;
+            text-align: center;
+        }
+    </style>
+     <form id="regForm" action="">
+            <div class="tab">
+                Welcome to SimpleFolio this question based tutorial is designed to help you keep track of all your
+                crypto currency investments and further make you comfortable with the tools used to keep track of
+                those investments please follow along and answer all the questions to the best of your knowledge!
+            </div>
+
+            <div class="tab">
+                Do you know what crypto currencies are?
+            </div>
+
+            <div class="tab">
+                Do you know how to read trends?
+            </div>
+
+            <div class="tab">
+                Have you heard of a crypto portfolio?
+            </div>
+            <div style="text-align: center; padding-top: 7%;">
+                    <button type="button" class="btn btn-primary" id="prevBtn" onclick="showModal(1)">No</button>
+                    <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextPrev(1)">Yes</button>
+                </div>
+        </form>
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                    Crypto currencies are virtual currencies which have real monetary values attached to them.<br>
+                    There are many crypto currencies with the most famous one being Bitcoin.
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextPrev(1)">Next</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-body">
+                        Trends show the latest changes in value of coins.<br>
+                        These are especially important to know when planning to invest into a coin.
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextPrev(1)">Next</button>
+                        </div>
+                    </div>
+                    </div>
+            </div>
+            <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                            A crypto portfolio is a tool used by investors to keep track of investment values.<br>
+                            This is important to know especially when it's time to sell.
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextPrev(1)">Next</button>
+                            </div>
+                        </div>
+                        </div>
+            </div>
+    <script>
+        var currentTab = 0; // Current tab is set to be the first tab (0)
+        var x = 0
+        showTab(currentTab); // Display the current tab
+
+        function showTab(n) {
+          // This function will display the specified tab of the form ...
+          var x = document.getElementsByClassName("tab");
+          x[n].style.display = "block";
+          // ... and fix the Previous/Next buttons:
+          if (n == 0) {
+            document.getElementById("prevBtn").style.display = "none";
+          } else {
+            document.getElementById("prevBtn").style.display = "inline";
+          }
+          if (n == (x.length - 1)) {
+            document.getElementById("nextBtn").innerHTML = "Finish";
+          } else {
+            document.getElementById("nextBtn").innerHTML = "Yes";
+          }
+          // ... and run a function that displays the correct step indicator:
+        //   fixStepIndicator(n)
+        }
+
+        function nextPrev(n) {
+            $('#exampleModal'+currentTab).modal('hide')
+          // This function will figure out which tab to display
+          var x = document.getElementsByClassName("tab");
+          // Exit the function if any field in the current tab is invalid:
+        //   if (n == 1) return false;
+          // Hide the current tab:
+          x[currentTab].style.display = "none";
+          // Increase or decrease the current tab by 1:
+          currentTab = currentTab + n;
+          // if you have reached the end of the form... :
+          if (currentTab >= x.length) {
+            //...the form gets submitted:
+           window.location = '/'
+            return false;
+          }
+          // Otherwise, display the correct tab:
+          showTab(currentTab);
+        }
+
+        function showModal(n) {
+            x = x + 1
+            console.log('-----', currentTab)
+            $('#exampleModal'+currentTab).modal('show')
+            // alert('Modal number, ', x + n)
+    }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+{% endblock content %}

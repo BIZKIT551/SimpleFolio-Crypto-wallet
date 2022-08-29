@@ -1,0 +1,333 @@
+{% extends "pages/base.html" %}
+    {% block content %}
+        <head>
+            <title>Top coins</title>
+            <style>
+                .tab {
+                      display: none;
+                    }
+                .autocomplete {
+                  /*the container must be positioned relative:*/
+                  position: relative;
+                  display: inline-block;
+                }
+                .autocomplete-items {
+                  position: absolute;
+                  border: 1px solid #d4d4d4;
+                  border-bottom: none;
+                  border-top: none;
+                  z-index: 99;
+                    overflow: auto;
+                    height: 250px;
+                  /*position the autocomplete items to be the same width as the container:*/
+                  top: 100%;
+                  left: 0;
+                  right: 0;
+                }
+                .autocomplete-items div {
+                  padding: 10px;
+                  cursor: pointer;
+                  background-color: #fff;
+                  border-bottom: 1px solid #d4d4d4;
+                }
+                .autocomplete-items div:hover {
+                  /*when hovering an item:*/
+                  background-color: #e9e9e9;
+                }
+                .autocomplete-active {
+                  /*when navigating through the items using the arrow keys:*/
+                  background-color: DodgerBlue !important;
+                  color: #ffffff;
+                }
+                .table.table-dark tr td, th{
+                     vertical-align: middle;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="media-body">
+
+               <!-- Button trigger modal -->
+            <div style="margin-bottom: 5%; margin-top: 5%;">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                 + Add new coin
+                </button>
+            </div>
+            <div>
+
+                 <table class="table table-dark">
+                      <thead>
+                        <tr style="text-align: center;">
+                          <th scope="col">Coin</th>
+                          <th scope="col">Price in $</th>
+                          <th scope="col">Price in £</th>
+                          <th scope="col">Total in $</th>
+                          <th scope="col">Total in £</th>
+                            <th scope="col">Delete</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                {% for coin_data in coin_view %}
+
+                        <tr>
+                          <th scope="row">  {{ coin_data.coin_name }}</th>
+                          <td> {{ coin_data.price_usd }}</td>
+                          <td> {{ coin_data.price_gbp }}</td>
+                          <td>{{ coin_data.total_usd }}</td>
+                          <td>{{ coin_data.total_gbp }}</td>
+                            <td>
+                                <a href="{% url 'my-portfolio-del' coin_data.id %}">
+                                    <button type="button" class="btn btn-danger">Delete</button>
+                                </a>
+                            </td>
+                        </tr>
+                {% endfor  %}
+                  </tbody>
+                    </table>
+            </div>
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form id="addForm" method="POST">
+                            {% csrf_token %}
+                            <div class="tab">
+                              <div class="form-group autocomplete">
+                                <label for="coinName">Enter Coin Name</label>
+                                <input id="coinName" class="form-control" type="text" name="coin_name" placeholder="Enter Coin Name">
+                              </div>
+                            </div>
+                            <div class="tab">
+                              <div class="form-group">
+                                <label for="amount">Enter Amount</label>
+                                <input type="number" name="amount" class="form-control" id="amount" placeholder="Enter Amount">
+                              </div>
+                            </div>
+                            <div style="overflow:auto;">
+                              <div style="float:right;">
+                                <button type="button" class="btn btn-primary" id="prevBtn" onclick="nextPrev(-1)">Previous</button>
+                                <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextPrev(1)">Next</button>
+                              </div>
+                            </div>
+                        </form>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+            </div>
+            {{ coin_list|json_script:"hello-data" }}
+        <script>
+            var currentTab = 0; // Current tab is set to be the first tab (0)
+                showTab(currentTab); // Display the current tab
+
+                function showTab(n) {
+                  // This function will display the specified tab of the form ...
+                  var x = document.getElementsByClassName("tab");
+                  x[n].style.display = "block";
+                  // ... and fix the Previous/Next buttons:
+                  if (n == 0) {
+                    document.getElementById("prevBtn").style.display = "none";
+                  } else {
+                    document.getElementById("prevBtn").style.display = "inline";
+                  }
+                  if (n == (x.length - 1)) {
+                    document.getElementById("nextBtn").innerHTML = "Submit";
+                  } else {
+                    document.getElementById("nextBtn").innerHTML = "Next";
+                  }
+                  // ... and run a function that displays the correct step indicator:
+                }
+                function nextPrev(n) {
+                  // This function will figure out which tab to display
+                  var x = document.getElementsByClassName("tab");
+                  // Exit the function if any field in the current tab is invalid:
+                    var f = document.getElementById('coinName').value
+                  if (f.length < 1) return false;
+                  // Hide the current tab:
+                  x[currentTab].style.display = "none";
+                  // Increase or decrease the current tab by 1:
+                  currentTab = currentTab + n;
+                  // if you have reached the end of the form... :
+                  if (currentTab >= x.length) {
+                    //...the form gets submitted:
+                    document.getElementById("addForm").submit();
+                    return false;
+                  }
+                  // Otherwise, display the correct tab:
+                  showTab(currentTab);
+                }
+            function autocomplete(inp, arr) {
+  /*the autocomplete function takes two arguments,
+  the text field element and an array of possible autocompleted values:*/
+  var currentFocus;
+  /*execute a function when someone writes in the text field:*/
+  inp.addEventListener("input", function(e) {
+      var a, b, i, val = this.value;
+      /*close any already open lists of autocompleted values*/
+      closeAllLists();
+      if (!val) { return false;}
+      currentFocus = -1;
+      /*create a DIV element that will contain the items (values):*/
+      a = document.createElement("DIV");
+      a.setAttribute("id", this.id + "autocomplete-list");
+      a.setAttribute("class", "autocomplete-items");
+      /*append the DIV element as a child of the autocomplete container:*/
+      this.parentNode.appendChild(a);
+      /*for each item in the array...*/
+      for (i = 0; i < arr.length; i++) {
+        /*check if the item starts with the same letters as the text field value:*/
+        if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+          /*create a DIV element for each matching element:*/
+          b = document.createElement("DIV");
+          /*make the matching letters bold:*/
+          b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+          b.innerHTML += arr[i].substr(val.length);
+          /*insert a input field that will hold the current array item's value:*/
+          b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+          /*execute a function when someone clicks on the item value (DIV element):*/
+              b.addEventListener("click", function(e) {
+              /*insert the value for the autocomplete text field:*/
+              inp.value = this.getElementsByTagName("input")[0].value;
+              /*close the list of autocompleted values,
+              (or any other open lists of autocompleted values:*/
+              closeAllLists();
+          });
+          a.appendChild(b);
+        }
+      }
+  });
+      /*execute a function presses a key on the keyboard:*/
+      inp.addEventListener("keydown", function(e) {
+          var x = document.getElementById(this.id + "autocomplete-list");
+          if (x) x = x.getElementsByTagName("div");
+          if (e.keyCode == 40) {
+            /*If the arrow DOWN key is pressed,
+            increase the currentFocus variable:*/
+            currentFocus++;
+            /*and and make the current item more visible:*/
+            addActive(x);
+          } else if (e.keyCode == 38) { //up
+            /*If the arrow UP key is pressed,
+            decrease the currentFocus variable:*/
+            currentFocus--;
+            /*and and make the current item more visible:*/
+            addActive(x);
+          } else if (e.keyCode == 13) {
+            /*If the ENTER key is pressed, prevent the form from being submitted,*/
+            e.preventDefault();
+            if (currentFocus > -1) {
+              /*and simulate a click on the "active" item:*/
+              if (x) x[currentFocus].click();
+            }
+          }
+      });
+      function addActive(x) {
+        /*a function to classify an item as "active":*/
+        if (!x) return false;
+        /*start by removing the "active" class on all items:*/
+        removeActive(x);
+        if (currentFocus >= x.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = (x.length - 1);
+        /*add class "autocomplete-active":*/
+        x[currentFocus].classList.add("autocomplete-active");
+      }
+      function removeActive(x) {
+        /*a function to remove the "active" class from all autocomplete items:*/
+        for (var i = 0; i < x.length; i++) {
+          x[i].classList.remove("autocomplete-active");
+        }
+      }
+      function closeAllLists(elmnt) {
+        /*close all autocomplete lists in the document,
+        except the one passed as an argument:*/
+        var x = document.getElementsByClassName("autocomplete-items");
+        for (var i = 0; i < x.length; i++) {
+          if (elmnt != x[i] && elmnt != inp) {
+          x[i].parentNode.removeChild(x[i]);
+        }
+      }
+    }
+    /*execute a function when someone clicks in the document:*/
+    document.addEventListener("click", function (e) {
+        closeAllLists(e.target);
+    });
+    }
+    var value = JSON.parse(document.getElementById('hello-data').textContent);
+    autocomplete(document.getElementById("coinName"), value);
+        </script>
+        <script src="https://code.highcharts.com/highcharts.src.js"></script>
+        <script>
+            Highcharts.chart('container', {
+
+    title: {
+        text: 'Solar Employment Growth by Sector, 2010-2016'
+    },
+
+    subtitle: {
+        text: 'Source: thesolarfoundation.com'
+    },
+
+    yAxis: {
+        title: {
+            text: 'Number of Employees'
+        }
+    },
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'middle'
+    },
+
+    plotOptions: {
+        series: {
+            label: {
+                connectorAllowed: false
+            },
+            pointStart: 2010
+        }
+    },
+
+    series: [{
+        name: 'Installation',
+        data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
+    }, {
+        name: 'Manufacturing',
+        data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
+    }, {
+        name: 'Sales & Distribution',
+        data: [11744, 17722, 16005, 19771, 20185, 24377, 32147, 39387]
+    }, {
+        name: 'Project Development',
+        data: [null, null, 7988, 12169, 15112, 22452, 34400, 34227]
+    }, {
+        name: 'Other',
+        data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111]
+    }],
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                legend: {
+                    layout: 'horizontal',
+                    align: 'center',
+                    verticalAlign: 'bottom'
+                }
+            }
+        }]
+    }
+
+});
+        </script>
+        </body>
+    {% endblock content %}

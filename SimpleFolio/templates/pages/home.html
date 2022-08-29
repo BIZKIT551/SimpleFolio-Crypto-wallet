@@ -1,0 +1,23 @@
+{% extends "pages/base.html" %}
+    {% block content %}
+        <style>
+            #top-coin {
+                padding: 2%;
+                border: 1px solid #ccc;
+                margin: 2%;
+                border-radius: 5px;
+            }
+        </style>
+        <ul>
+             {% for crypto_values in crypto_data %}
+                <div id="top-coin">
+                <p>Coin ID: {{ crypto_values.symbol }}<br>
+                    Coin Name: {{ crypto_values.coin_name|capfirst }}<br>
+                    Price per coin in USD: ${{ crypto_values.usd|floatformat:2 }}<br>
+                    Price Per coin in GBP: £{{ crypto_values.gbp|floatformat:2 }}<br>
+                    Percentage price change: {{ crypto_values.changes|floatformat:2 }}%
+                </p>
+                </div>
+             {% endfor %}
+        </ul>
+    {% endblock content %}

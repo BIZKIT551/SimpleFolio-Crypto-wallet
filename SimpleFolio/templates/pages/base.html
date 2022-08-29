@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="theme-color" content="#001332">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'SimpleFolio/main.css' %}">
+
+    {% if title %}
+        <title>SimpleFolio- {{ title }}</title>
+    {% else %}
+        <title>SimpleFolio</title>
+    {% endif %}
+</head>
+<body>
+    <div class="navbar-dark fixed-bottom" style="background-color: #001D39;">
+        <div class="navbar-nav nav-justified navbar-expand ">
+            <a class="nav-item nav-link" {% if request.resolver_match.url_name == 'SimpleFolio-home' %}class="active" style="color: #D6AB31" {% endif %} href="{% url 'SimpleFolio-home' %}">Top coins</a>
+            <a class="nav-item nav-link" {% if request.resolver_match.url_name == 'latest-news' %}class="active" style="color: #D6AB31" {% endif %} href="{% url 'latest-news' %}">News</a>
+
+            {% if user.is_authenticated %}
+                <a class="nav-item nav-link" {% if request.resolver_match.url_name == 'my-portfolio' %}class="active" style="color: #D6AB31" {% endif %} href="{% url 'my-portfolio' %}">Portfolio</a>
+                <a class="nav-item nav-link" {% if request.resolver_match.url_name == 'profile' %}class="active" style="color: #D6AB31" {% endif %} href="{% url 'profile' %}">Profile</a>
+                <a class="nav-item nav-link" {% if request.resolver_match.url_name == 'logout' %}class="active" style="color: #D6AB31" {% endif %} href="{% url 'logout' %}">Logout</a>
+            {% else %}
+                <a class="nav-item nav-link" {% if request.resolver_match.url_name == 'login' %}class="active" style="color: #D6AB31" {% endif %} href="{% url 'login' %}">Login</a>
+                <a class="nav-item nav-link" {% if request.resolver_match.url_name == 'register' %}class="active" style="color: #D6AB31" {% endif %} href="{% url 'register' %}">Register</a>
+            {% endif %}
+        </div>
+    </div>
+<main role="main" class="container">
+    <div class="row">
+        <div class="col-md-8">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</main>
+    <script>
+        onBoard = localStorage.getItem('onboard');
+        if(!onBoard){
+            window.location = 'onboarding/';
+            localStorage.setItem('onboard', true)
+        }
+    </script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+</body>
+</html>

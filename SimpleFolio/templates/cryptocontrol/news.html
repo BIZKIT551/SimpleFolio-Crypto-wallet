@@ -1,0 +1,31 @@
+{% extends "pages/base.html" %}
+    {% block content %}
+        <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin: 0
+        }
+        </style>
+        <ul style="float: left; margin-bottom: 10%;">
+             {% for news in crypto_news %}
+                 <div  style="margin-bottom: 5%">
+
+                     <div style="float: left; margin-right: 2%">
+                         <img src="{{ news.thumbnail }}" />
+                     </div>
+                    <div>
+                        <h5><a href="{{ news.url }}">{{ news.title }}</a></h5>
+                        <p>Published Date: {{ news.publishedAt }}</p>
+                        <p>({{ news.sourceDomain }})</p>
+                    </div>
+                     <div style="clear: both"></div>
+                 </div>
+            {% endfor %}
+        </ul>
+    {% endblock content %}
+
+
+
