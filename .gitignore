@@ -1,0 +1,7 @@
+./venv
+venv/.gitignore
+venv/Lib/
+venv/Scripts/Pipfile
+venv/bin/
+venv/lib64
+venv/share/
